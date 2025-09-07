@@ -1,0 +1,202 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Hide horizontal overflow */
+}
+/* .main {
+    background-image: url('/static/background.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+} */
+.main {
+    background-image: url('/static/background.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed; /* Keep background fixed */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    min-height: 100vh; /* Ensure background covers entire viewport height */
+}
+
+
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow-x: hidden; /* Hide horizontal overflow */
+}
+
+
+h1 {
+    font-size: 32px;
+    color: #333;
+    text-align: center;
+    margin: 0;
+}
+
+h2 {
+    color: #333;
+    text-align: center;
+}
+
+.para {
+    color: #333;
+    text-align: center;
+}
+
+.types {
+    margin: 0;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+input[type="file"],
+button {
+    margin: 10px 0;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    width: 100%;
+    max-width: 500px;
+    box-sizing: border-box;
+    color: #000000;
+}
+
+select {
+    border: 1px solid #000000;
+    border-radius: 5px;
+    box-sizing: border-box;
+    color: #000000;
+    padding: 5px 10px;
+}
+
+.sub {
+    border: 1px solid #000000;
+    border-radius: 5px;
+    box-sizing: border-box;
+    color: #ffffff;
+    padding: 10px 1px
+}
+
+button {
+    background-color: #49A010;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button {
+    background-color: #49A010;
+}
+
+.prediction {
+    font-size: 20px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.selector {
+    margin: 10px 0;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    width: 100%;
+    max-width: 500px;
+    box-sizing: border-box;
+    color: #000000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.background {
+    background-color: #49A010;
+    color: white;
+}
+
+.important-word {
+    color: #49A010;
+}
+
+
+
+
+
+.h2, .disease-details h3 {
+    color: #49A010;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.disease-details {
+    background-color: #f8f8f8;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.disease-details p {
+    color: #333;
+    line-height: 1.6;
+}
+
+.disease-details strong {
+    color: #49A010;
+}
+
+/* Optional: If your prevention/cure details are 
+expected to be longer texts or lists */
+.disease-details ul {
+    list-style: inside;
+    padding-left: 0;
+}
+
+.disease-details li {
+    margin-bottom: 5px;
+}
+
+/* Improvement for better visual separation between entries */
+.disease-details p:not(:last-child) {
+    margin-bottom: 10px;
+}
+
+#chatbase-bubble-button{
+    right: 2rem;
+}
+
+/* NEW */
+
+#plant-doc-ai {
+    position: fixed; 
+    bottom: 15px; 
+    right: 10px; 
+    width: 350px;
+    height: auto; 
+    z-index: 10; 
+    opacity: 0; /* Initially hidden */
+    transition: opacity 1s ease-in-out; /* Smooth transition effect */
+}

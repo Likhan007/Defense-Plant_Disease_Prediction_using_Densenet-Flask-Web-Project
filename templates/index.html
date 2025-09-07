@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plant Disease Prediction</title>
+    <link rel="icon" href="../static/logo.jpg" type="image/x-icon" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+
+  <body>
+    <div class="main">
+      <div class="container">
+        <h1>
+          Fruit’s and Vegetable’s <span class="important-word">Leaf</span>
+        </h1>
+        <h1><span class="important-word">Disease</span> Predictor</h1>
+        <p class="para">
+          You can upload any leaf image to determine whether the leaf has
+          disease or not
+        </p>
+        <form method="post" enctype="multipart/form-data">
+          <div class="selector">
+            <p class="types">Select your desired fruits/vegetables image</p>
+            <select name="plant_type" class="background">
+              <option value="select">Select</option>
+              <option value="tomato">Tomato</option>
+              <option value="corn">Corn</option>
+              <option value="tea">Tea</option>
+              <option value="cotton">Cotton</option>
+              <option value="potato">Potato</option>
+              <!-- <option value="mango">Mango</option> -->
+              <option value="rice">Rice</option>
+            </select>
+          </div>
+          <input type="file" name="file" accept=".jpg, .png, .jpeg" />
+          <button type="submit" class="sub">Predict the Disease</button>
+        </form>
+        {% if prediction %}
+        <h2>Predicted Disease: {{ prediction }}</h2>
+        <div class="disease-details">
+          <h3>{{ prediction }}</h3>
+          {% set details = diseases_details or {} %}
+          <p><strong>Disease:</strong> {{ details.get('disease', 'N/A') }}</p>
+          <p><strong>Occurrence:</strong> {{ details.get('occurrence', 'N/A') }}</p>
+          <p><strong>Prevention:</strong></p>
+          {% if details.get('prevention') is iterable and details.get('prevention') is not string %}
+          <ul>
+            {% for item in details.get('prevention') %}
+            <li>{{ item }}</li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <p>{{ details.get('prevention', 'N/A') }}</p>
+          {% endif %}
+
+          <p><strong>Cure:</strong> {{ details.get('cure', 'N/A') }}</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    <img src="/static/ChatBubble.png" alt="Plant Doc AI" id="plant-doc-ai" />
+    <script>
+      window.embeddedChatbotConfig = {
+        chatbotId: "o0fj282sj0lRZfVvmIVGD",
+        domain: "www.chatbase.co",
+      };
+    </script>
+    <script
+      src="https://www.chatbase.co/embed.min.js"
+      chatbotId="o0fj282sj0lRZfVvmIVGD"
+      domain="www.chatbase.co"
+      defer
+    ></script>
+
+    <script>
+      function animateImage() {
+        var image = document.getElementById("plant-doc-ai");
+
+        setTimeout(function () {
+          image.style.opacity = 1;
+
+          setTimeout(function () {
+            image.style.opacity = 0;
+
+            setTimeout(animateImage, 50000); // hide for this time + 10 seconds
+          }, 10000); // show for this time
+        }, 0);
+      }
+
+      // Start the animation
+      animateImage();
+    </script>
+  </body>
+</html>
