@@ -200,3 +200,63 @@ expected to be longer texts or lists */
     opacity: 0; /* Initially hidden */
     transition: opacity 1s ease-in-out; /* Smooth transition effect */
 }
+
+/* WhatsApp Button Styles */
+.whatsapp-button {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: #25D366;
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), 0 0 0 4px rgba(37, 211, 102, 0.2);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    text-decoration: none;
+    color: white;
+    animation: pulse 2s infinite;
+}
+
+.whatsapp-button:hover {
+    background-color: #128C7E;
+    transform: scale(1.15);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4), 0 0 0 6px rgba(37, 211, 102, 0.3);
+    animation: none;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), 0 0 0 4px rgba(37, 211, 102, 0.2);
+    }
+    50% {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), 0 0 0 8px rgba(37, 211, 102, 0.4);
+    }
+    100% {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), 0 0 0 4px rgba(37, 211, 102, 0.2);
+    }
+}
+
+.whatsapp-button svg {
+    width: 28px;
+    height: 28px;
+}
+
+/* Responsive design for mobile */
+@media (max-width: 768px) {
+    .whatsapp-button {
+        width: 50px;
+        height: 50px;
+        bottom: 15px;
+        left: 15px;
+    }
+    
+    .whatsapp-button svg {
+        width: 24px;
+        height: 24px;
+    }
+}
