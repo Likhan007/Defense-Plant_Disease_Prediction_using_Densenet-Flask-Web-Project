@@ -2,6 +2,7 @@ body {
     margin: 0;
     padding: 0;
     overflow-x: hidden; /* Hide horizontal overflow */
+    font-family: 'Noto Sans Bengali', sans-serif;
 }
 /* .main {
     background-image: url('/static/background.png');
@@ -246,6 +247,41 @@ expected to be longer texts or lists */
     height: 28px;
 }
 
+/* Language Toggle Button */
+.language-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1001;
+}
+
+.lang-btn {
+    background: linear-gradient(135deg, #49A010, #2d5a0a);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(73, 160, 16, 0.3);
+    transition: all 0.3s ease;
+    font-family: 'Noto Sans Bengali', sans-serif;
+}
+
+.lang-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(73, 160, 16, 0.4);
+    background: linear-gradient(135deg, #2d5a0a, #49A010);
+}
+
+.lang-icon {
+    font-size: 16px;
+}
+
 /* Responsive design for mobile */
 @media (max-width: 768px) {
     .whatsapp-button {
@@ -258,5 +294,15 @@ expected to be longer texts or lists */
     .whatsapp-button svg {
         width: 24px;
         height: 24px;
+    }
+    
+    .language-toggle {
+        top: 15px;
+        right: 15px;
+    }
+    
+    .lang-btn {
+        padding: 8px 16px;
+        font-size: 12px;
     }
 }

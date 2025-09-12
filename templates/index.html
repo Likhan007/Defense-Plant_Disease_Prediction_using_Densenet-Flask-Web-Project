@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Plant Disease Prediction</title>
     <link rel="icon" href="../static/logo.jpg" type="image/x-icon" />
+    <!-- Google Fonts for Bangla Support -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
@@ -12,52 +16,50 @@
   </head>
 
   <body>
+    <!-- Language Toggle Button -->
+    <div class="language-toggle">
+      <button id="lang-toggle" class="lang-btn" onclick="toggleLanguage()">
+        <span class="lang-text" data-en="English" data-bn="বাংলা">English</span>
+        <span class="lang-icon">🌐</span>
+      </button>
+    </div>
+
     <div class="main">
       <div class="container">
-        <h1>
-          Fruit’s and Vegetable’s <span class="important-word">Leaf</span>
+        <h1 class="translatable" data-en="Fruit's and Vegetable's" data-bn="ফল ও সবজির">
+          Fruit's and Vegetable's <span class="important-word translatable" data-en="Leaf" data-bn="পাতা">Leaf</span>
         </h1>
-        <h1><span class="important-word">Disease</span> Predictor</h1>
-        <p class="para">
+        <h1><span class="important-word translatable" data-en="Disease" data-bn="রোগ">Disease</span> <span class="translatable" data-en="Predictor" data-bn="পূর্বাভাসকারী">Predictor</span></h1>
+        <p class="para translatable" data-en="You can upload any leaf image to determine whether the leaf has disease or not" data-bn="আপনি যেকোনো পাতার ছবি আপলোড করে দেখতে পারেন পাতায় রোগ আছে কিনা">
           You can upload any leaf image to determine whether the leaf has
           disease or not
         </p>
         <form method="post" enctype="multipart/form-data">
+          <input type="hidden" id="language-input" name="language" value="{{ current_language or 'en' }}">
           <div class="selector">
-            <p class="types">Select your desired fruits/vegetables image</p>
+            <p class="types translatable" data-en="Select your desired fruits/vegetables image" data-bn="আপনার পছন্দের ফল/সবজির ছবি নির্বাচন করুন">Select your desired fruits/vegetables image</p>
             <select name="plant_type" class="background">
-              <option value="select">Select</option>
-              <option value="tomato">Tomato</option>
-              <option value="corn">Corn</option>
-              <option value="tea">Tea</option>
-              <option value="cotton">Cotton</option>
-              <option value="potato">Potato</option>
-              <!-- <option value="mango">Mango</option> -->
-              <option value="rice">Rice</option>
+              <option value="select" class="translatable" data-en="Select" data-bn="নির্বাচন করুন">Select</option>
+              <option value="tomato" class="translatable" data-en="Tomato" data-bn="টমেটো">Tomato</option>
+              <option value="corn" class="translatable" data-en="Corn" data-bn="ভুট্টা">Corn</option>
+              <option value="tea" class="translatable" data-en="Tea" data-bn="চা">Tea</option>
+              <option value="cotton" class="translatable" data-en="Cotton" data-bn="তুলা">Cotton</option>
+              <option value="potato" class="translatable" data-en="Potato" data-bn="আলু">Potato</option>
+              <option value="rice" class="translatable" data-en="Rice" data-bn="ধান">Rice</option>
             </select>
           </div>
           <input type="file" name="file" accept=".jpg, .png, .jpeg" />
-          <button type="submit" class="sub">Predict the Disease</button>
+          <button type="submit" class="sub translatable" data-en="Predict the Disease" data-bn="রোগ পূর্বাভাস করুন">Predict the Disease</button>
         </form>
         {% if prediction %}
-        <h2>Predicted Disease: {{ prediction }}</h2>
+        <h2><span class="translatable" data-en="Predicted Disease" data-bn="পূর্বাভাসিত রোগ">Predicted Disease</span>: <span id="prediction-text">{{ prediction }}</span></h2>
         <div class="disease-details">
           <h3>{{ prediction }}</h3>
           {% set details = diseases_details or {} %}
-          <p><strong>Disease:</strong> {{ details.get('disease', 'N/A') }}</p>
-          <p><strong>Occurrence:</strong> {{ details.get('occurrence', 'N/A') }}</p>
-          <p><strong>Prevention:</strong></p>
-          {% if details.get('prevention') is iterable and details.get('prevention') is not string %}
-          <ul>
-            {% for item in details.get('prevention') %}
-            <li>{{ item }}</li>
-            {% endfor %}
-          </ul>
-          {% else %}
-          <p>{{ details.get('prevention', 'N/A') }}</p>
-          {% endif %}
-
-          <p><strong>Cure:</strong> {{ details.get('cure', 'N/A') }}</p>
+          <p><strong class="translatable" data-en="Disease" data-bn="রোগ">Disease</strong>: <span class="disease-detail">{{ details.get('disease', 'N/A') }}</span></p>
+          <p><strong class="translatable" data-en="Occurrence" data-bn="ঘটনা">Occurrence</strong>: <span class="disease-detail">{{ details.get('occurrence', 'N/A') }}</span></p>
+          <p><strong class="translatable" data-en="Prevention" data-bn="প্রতিরোধ">Prevention</strong>: <span class="disease-detail">{{ details.get('prevention', 'N/A') }}</span></p>
+          <p><strong class="translatable" data-en="Cure" data-bn="চিকিৎসা">Cure</strong>: <span class="disease-detail">{{ details.get('cure', 'N/A') }}</span></p>
         </div>
         {% endif %}
       </div>
@@ -88,6 +90,48 @@
     ></script>
 
     <script>
+      // Simple language system
+      let currentLanguage = '{{ current_language or "en" }}';
+
+      function toggleLanguage() {
+        currentLanguage = currentLanguage === 'en' ? 'bn' : 'en';
+        
+        // Update hidden form field
+        const languageInput = document.getElementById('language-input');
+        if (languageInput) {
+          languageInput.value = currentLanguage;
+        }
+        
+        // Reload page with new language parameter
+        const url = new URL(window.location);
+        url.searchParams.set('lang', currentLanguage);
+        window.location.href = url.toString();
+      }
+
+      function updateLanguage() {
+        // Update toggle button
+        const langToggle = document.getElementById('lang-toggle');
+        const langText = langToggle.querySelector('.lang-text');
+        langText.textContent = currentLanguage === 'en' ? 'বাংলা' : 'English';
+        
+        // Update all translatable elements
+        document.querySelectorAll('.translatable').forEach(element => {
+          const enText = element.getAttribute('data-en');
+          const bnText = element.getAttribute('data-bn');
+          if (enText && bnText) {
+            element.textContent = currentLanguage === 'en' ? enText : bnText;
+          }
+        });
+        
+        // Update body font for Bangla
+        document.body.style.fontFamily = currentLanguage === 'bn' ? '"Noto Sans Bengali", sans-serif' : 'inherit';
+      }
+
+      // Initialize language on page load
+      document.addEventListener('DOMContentLoaded', function() {
+        updateLanguage();
+      });
+
       function animateImage() {
         var image = document.getElementById("plant-doc-ai");
 
