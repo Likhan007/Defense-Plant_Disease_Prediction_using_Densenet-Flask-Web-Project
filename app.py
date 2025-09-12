@@ -6,8 +6,22 @@ import os
 from werkzeug.utils import secure_filename
 import tempfile
 import uuid
+from PIL import Image
+import io
 
 app = Flask(__name__)
+
+# Configure GPU memory growth to avoid allocating all GPU memory at once
+gpus = tf.config.experimental.list_physical_devices('GPU')
+if gpus:
+    try:
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+        print(f'GPU acceleration enabled: {len(gpus)} GPU(s) detected')
+    except RuntimeError as e:
+        print(f'GPU configuration error: {e}')
+else:
+    print('No GPU detected, using CPU')
 
 # Load the models
 MODEL_DIR = 'models'
@@ -28,6 +42,15 @@ model_mapping = {
 
 _model_cache = {}
 
+def warmup_model(model):
+    """Warm up the model with a dummy prediction"""
+    try:
+        dummy_input = np.random.random((1, 224, 224, 3)).astype('float32')
+        _ = model.predict(dummy_input, verbose=0)
+        print("Model warmup completed")
+    except Exception as e:
+        print(f"Model warmup failed: {e}")
+
 def load_model(plant_type):
     # Return cached model if available
     if plant_type in _model_cache:
@@ -38,6 +61,8 @@ def load_model(plant_type):
         raise ValueError('Invalid plant type selected')
 
     model_path = os.path.join(MODEL_DIR, model_filename)
+    print(f"Loading {plant_type} model from {model_path}")
+    
     # Register custom objects for data augmentation layers
     custom_objects = {
         'RandomHeight': RandomHeight,
@@ -47,12 +72,31 @@ def load_model(plant_type):
         'RandomFlip': RandomFlip
     }
     model = tf.keras.models.load_model(model_path, custom_objects=custom_objects)
+    
+    # Optimize for inference
+    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+    
+    # Warm up the model
+    warmup_model(model)
+    
     _model_cache[plant_type] = model
+    print(f"{plant_type} model loaded and optimized successfully")
     return model
 
 def _is_allowed_file(filename):
     _, ext = os.path.splitext(filename.lower())
     return ext in ALLOWED_EXTENSIONS
+
+def preload_all_models():
+    """Pre-load all models at startup to avoid loading delays during prediction"""
+    print("Pre-loading all models...")
+    for plant_type in model_mapping.keys():
+        try:
+            load_model(plant_type)
+            print(f"✓ Loaded {plant_type} model successfully")
+        except Exception as e:
+            print(f"✗ Failed to load {plant_type} model: {e}")
+    print("Model pre-loading completed!")
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -73,19 +117,23 @@ def index():
             if plant_type not in model_mapping:
                 return render_template('index.html', prediction='Please select a valid plant type.')
 
-            safe_name = secure_filename(file.filename)
-            unique_name = f"{uuid.uuid4().hex}_{safe_name}"
-            file_path = os.path.join(UPLOAD_DIR, unique_name)
-            file.save(file_path)
+            # Process image in memory instead of saving to disk
+            file_data = file.read()
+            
+            # Load and process image in memory
+            img = Image.open(io.BytesIO(file_data))
+            img = img.resize((224, 224))
+            img = img.convert('RGB')  # Ensure RGB format
+            
+            # Convert to numpy array and normalize
+            x = np.array(img)
+            x = np.expand_dims(x, axis=0)
+            x = x.astype('float32') / 255.0
 
             model = load_model(plant_type)
 
-            img = tf.keras.preprocessing.image.load_img(file_path, target_size=(224, 224))
-            x = tf.keras.preprocessing.image.img_to_array(img)
-            x = np.expand_dims(x, axis=0)
-            x /= 255.0
-
-            preds = model.predict(x)
+            # Make prediction
+            preds = model.predict(x, verbose=0)
             pred_class = np.argmax(preds, axis=1)
 
             result = get_class(plant_type, pred_class[0])
@@ -98,12 +146,8 @@ def index():
         except Exception as exc:
             return render_template('index.html', prediction=f'Error: {str(exc)}')
         finally:
-            # Best-effort cleanup of uploaded file
-            try:
-                if 'file_path' in locals() and os.path.exists(file_path):
-                    os.remove(file_path)
-            except Exception:
-                pass
+            # No file cleanup needed since we process in memory
+            pass
 
     # GET request
     return render_template('index.html', prediction=None)
@@ -535,4 +579,9 @@ diseases_details = {
 
 
 if __name__ == '__main__':
+    print('Starting Plant Disease Prediction App...')
+    print('Pre-loading models for faster predictions...')
+    preload_all_models()
+    print('All models loaded successfully!')
+    print('Starting Flask server...')
     app.run(debug=True)
